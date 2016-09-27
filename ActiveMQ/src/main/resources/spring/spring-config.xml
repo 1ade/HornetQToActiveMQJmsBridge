@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:amq="http://activemq.apache.org/schema/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd">
+
+	<amq:broker useJmx="false" persistent="false">
+		<amq:transportConnectors>
+			<amq:transportConnector uri="ssl://localhost:61616?needClientAuth=true" />
+		</amq:transportConnectors>
+		<amq:sslContext >
+			<amq:sslContext
+			keyStore="D:\Users\aifa\git\HornetQToActiveMQJmsBridge\ActiveMQ\src\main\resources\security\broker.ks"
+			keyStorePassword="123456"
+			trustStore="D:\Users\aifa\git\HornetQToActiveMQJmsBridge\ActiveMQ\src\main\resources\security\broker.ts"
+			trustStorePassword="123456" />		
+		</amq:sslContext>
+		
+		
+		<amq:plugins>
+			<amq:simpleAuthenticationPlugin>
+				<amq:users>
+					<amq:authenticationUser username="admin" password="admin" groups="admin,all" />
+				</amq:users>
+			</amq:simpleAuthenticationPlugin>
+			<amq:authorizationPlugin>
+				<amq:map>
+					<amq:authorizationMap>
+						<amq:authorizationEntries>
+							<amq:authorizationEntry queue=">" admin="admin"  read="admin" write="admin" />
+							<amq:authorizationEntry topic=">" admin="admin"  read="admin" write="admin" />
+						</amq:authorizationEntries>
+					</amq:authorizationMap>
+				</amq:map>
+			</amq:authorizationPlugin>
+		</amq:plugins>
+	</amq:broker>
+	
+	<bean id="jmsFactory" class="org.apache.activemq.ActiveMQSslConnectionFactory">	
+		<property name="trustStore"
+			value="D:\Users\aifa\git\HornetQToActiveMQJmsBridge\ActiveMQ\src\main\resources\security\client.ts" />
+		<property name="trustStorePassword" value="123456" />
+		<property name="keyStore"
+			value="D:\Users\aifa\git\HornetQToActiveMQJmsBridge\ActiveMQ\src\main\resources\security\client.ks" />
+		<property name="keyStorePassword" value="123456" />
+		<property name="brokerURL" value="ssl://localhost:61616" />
+		<property name="userName" value="admin" />
+		<property name="password" value="admin" />
+	</bean>
+	
+	
+</beans>
